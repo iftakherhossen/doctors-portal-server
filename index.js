@@ -3,6 +3,7 @@ const cors = require('cors');
 require('dotenv').config();
 const { MongoClient } = require('mongodb');
 const admin = require("firebase-admin");
+const ObjectId = require('mongodb').ObjectId;
 
 const app = express();
 const port = process.env.PORT || 5000;
@@ -59,10 +60,17 @@ async function run() {
             res.send(available);
         })
 
+        // GET Appointments API
+        app.get('/appointments', async (req, res) => {
+            const cursor = appointmentsCollection.find({});
+            const appointment = await cursor.toArray();
+            res.send(appointment);
+        })
+
         // GET Appointment API With Filter
-        app.get('/appointments',verifyToken, async (req, res) => {
+        app.get('/appointments', verifyToken, async (req, res) => {
             const email = req.query.email;
-            const date = req.query.date;
+            const date = new Date(req.query.date).toLocaleDateString();
             const query = { email: email, date: date };
             const cursor = appointmentsCollection.find(query);
             const appointments = await cursor.toArray();
@@ -74,6 +82,22 @@ async function run() {
             const appointment = req.body;
             const result = await appointmentsCollection.insertOne(appointment)
             res.json(result)
+        })
+
+        // GET Single Appointment API 
+        app.get('/appointments/:id', async (req, res) => {
+            const id = req.params.id;
+            const query = { _id: ObjectId(id) };
+            const appointmentId = await appointmentsCollection.findOne(query);
+            res.json(appointmentId);
+        })
+
+        // DELETE Appointment API
+        app.delete('/appointments/:id', async (req, res) => {
+            const id = req.params.id;
+            const query = { _id: ObjectId(id) };
+            const result = await appointmentsCollection.deleteOne(query);
+            res.json(result);
         })
 
         // GET Users API
@@ -103,7 +127,6 @@ async function run() {
             res.json({ admin: isAdmin })
         })
 
-
         // Update Users
         app.put('/users', async (req, res) => {
             const user = req.body;
@@ -128,7 +151,7 @@ async function run() {
                 }
             }
             else {
-                res.status(403).json({message: 'You do not have any access to make an admin!'})
+                res.status(403).json({ message: 'You do not have any access to make an admin!' })
             }
         })
     }
