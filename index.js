@@ -46,6 +46,7 @@ async function run() {
         const availableAppointmentsCollection = database.collection('availableAppointments');
         const appointmentsCollection = database.collection('appointments');
         const usersCollection = database.collection('users');
+        const reviewsCollection = database.collection('reviews');
 
         // GET Services API
         app.get('/services', async (req, res) => {
@@ -180,6 +181,20 @@ async function run() {
                 payment_method_types: ['card']
             });
             res.json({ clientSecret: paymentIntent.client_secret })
+        })
+
+        // GET Reviews API
+        app.get('/reviews', async (req, res) => {
+            const cursor = reviewsCollection.find({});
+            const result = await cursor.toArray();
+            res.send(result);
+        })
+
+        // POST Reviews API
+        app.post('/reviews', async (req, res) => {
+            const review = req.body;
+            const result = await reviewsCollection.insertOne(review);
+            res.json(result);
         })
     }
     finally {
