@@ -69,11 +69,20 @@ async function run() {
             res.send(appointment);
         })
 
-        // GET Appointment API With Filter
+        // GET Appointment API With Double Filter
         app.get('/appointments/user', verifyToken, async (req, res) => {
             const email = req.query.email;
             const date = new Date(req.query.date).toLocaleDateString();
             const query = { email: email, date: date };
+            const cursor = appointmentsCollection.find(query);
+            const appointments = await cursor.toArray();
+            res.json(appointments);
+        })
+
+        // GET Appointment API With Single Filter
+        app.get('/appointments/email', verifyToken, async (req, res) => {
+            const email = req.query.email;
+            const query = { email: email };
             const cursor = appointmentsCollection.find(query);
             const appointments = await cursor.toArray();
             res.json(appointments);
