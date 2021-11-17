@@ -6,8 +6,8 @@ const admin = require("firebase-admin");
 const ObjectId = require('mongodb').ObjectId;
 const stripe = require('stripe')(process.env.STRIPE_SECRET)
 const fileUpload = require('express-fileupload');
-
 const app = express();
+
 app.use(cors());
 app.use(express.json());
 app.use(fileUpload());
@@ -216,14 +216,21 @@ async function run() {
             const cursor = doctorsCollection.find({});
             const result = await cursor.toArray();
             res.json(result);
-        })
+        });
+
+        // GET Single Doctors API
+        app.get('/doctors/:id', async (req, res) => {
+            const query = { _id: ObjectId(req.params.id) }
+            const result = await doctorsCollection.findOne(query);
+            res.json(result);
+        });
 
         // POST Doctor's API
         app.post('/doctors', async (req, res) => {
             const name =req.body.name;
             const email = req.body.email;
-            const image = req.files.image;
-            const imgData = image.data;
+            const img = req.files.image;
+            const imgData = img.data;
             const encodedImg = imgData.toString('base64');
             const imgBuffer = Buffer.from(encodedImg, 'base64');
             const doctor = {
@@ -234,6 +241,14 @@ async function run() {
             const result = await doctorsCollection.insertOne(doctor);
             res.json(result);
         });
+
+        // DELETE Appointment API
+        app.delete('/doctors/:id', async (req, res) => {
+            const id = req.params.id;
+            const query = { _id: ObjectId(id) };
+            const result = await doctorsCollection.deleteOne(query);
+            res.json(result);
+        })
     }
     finally {
         // await client.close();
