@@ -211,9 +211,28 @@ async function run() {
             res.json(result);
         });
 
+        // GET Doctor's API
+        app.get('/doctors', async (req, res) => {
+            const cursor = doctorsCollection.find({});
+            const result = await cursor.toArray();
+            res.json(result);
+        })
+
         // POST Doctor's API
         app.post('/doctors', async (req, res) => {
-            
+            const name =req.body.name;
+            const email = req.body.email;
+            const image = req.files.image;
+            const imgData = image.data;
+            const encodedImg = imgData.toString('base64');
+            const imgBuffer = Buffer.from(encodedImg, 'base64');
+            const doctor = {
+                name,
+                email,
+                image: imgBuffer
+            }
+            const result = await doctorsCollection.insertOne(doctor);
+            res.json(result);
         });
     }
     finally {
