@@ -211,6 +211,14 @@ async function run() {
             res.json(result);
         });
 
+        // GET Single Reviews API 
+        app.get('/reviews/:id', async (req, res) => {
+            const id = req.params.id;
+            const query = { _id: ObjectId(id) };
+            const reviewId = await reviewsCollection.findOne(query);
+            res.json(reviewId);
+        })
+
         // GET Doctor's API
         app.get('/doctors', async (req, res) => {
             const cursor = doctorsCollection.find({});
@@ -242,7 +250,7 @@ async function run() {
             res.json(result);
         });
 
-        // DELETE Appointment API
+        // DELETE Doctors API
         app.delete('/doctors/:id', async (req, res) => {
             const id = req.params.id;
             const query = { _id: ObjectId(id) };
