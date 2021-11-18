@@ -86,7 +86,7 @@ async function run() {
 
         // GET Appointment API With Email
         app.get('/appointments/:email', verifyToken, async (req, res) => {
-            const email = req.query.email;
+            const email = req.params.email;
             const query = { email: email };
             const cursor = appointmentsCollection.find(query);
             const appointments = await cursor.toArray();
