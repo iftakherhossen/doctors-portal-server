@@ -219,6 +219,14 @@ async function run() {
             res.json(reviewId);
         })
 
+        // DELETE Reviews API
+        app.delete('/reviews/:id', async (req, res) => {
+            const id = req.params.id;
+            const query = { _id: ObjectId(id) };
+            const result = await doctorsCollection.deleteOne(query);
+            res.json(result);
+        })
+
         // GET Doctor's API
         app.get('/doctors', async (req, res) => {
             const cursor = doctorsCollection.find({});
