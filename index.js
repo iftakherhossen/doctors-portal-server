@@ -108,17 +108,31 @@ async function run() {
             res.json(appointmentId);
         })
 
-        // PUT Single Appointment 
+        // PUT Payment Info to a Single Appointment 
         app.put('/appointments/:id', async(req, res) => {
             const id = req.params.id;
             const payment = req.body;
             const filter = { _id: ObjectId(id) };
-            const updateDoc = {
+            const updatePayment = {
                 $set: {
                     payment: payment
                 }
             };
-            const result = await appointmentsCollection.updateOne(filter, updateDoc);
+            const result = await appointmentsCollection.updateOne(filter, updatePayment);
+            res.json(result);
+        })
+
+        // PUT Status Info to a Single Appointment 
+        app.put('/appointments/status/:id', async(req, res) => {
+            const id = req.params.id;
+            const status = req.body;
+            const filter = { _id: ObjectId(id) };
+            const updateStatus = {
+                $set: {
+                    status: status
+                }
+            };
+            const result = await appointmentsCollection.updateOne(filter, updateStatus);
             res.json(result);
         })
 
