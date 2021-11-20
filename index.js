@@ -104,12 +104,12 @@ async function run() {
         app.get('/appointments/:id', async (req, res) => {
             const id = req.params.id;
             const query = { _id: ObjectId(id) };
-            const appointmentId = await appointmentsCollection.findOne(query);
-            res.json(appointmentId);
+            const appointment = await appointmentsCollection.findOne(query);
+            res.json(appointment);
         })
 
         // PUT Payment Info to a Single Appointment 
-        app.put('/appointments/payment/:id', async(req, res) => {
+        app.put('/appointments/:id', async(req, res) => {
             const id = req.params.id;
             const payment = req.body;
             const filter = { _id: ObjectId(id) };
