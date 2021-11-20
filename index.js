@@ -96,7 +96,7 @@ async function run() {
         // POST Appointment API
         app.post('/appointments', async (req, res) => {
             const appointment = req.body;
-            const result = await appointmentsCollection.insertOne(appointment)
+            const result = await appointmentsCollection.insertOne(appointment);
             res.json(result)
         })
 
@@ -109,7 +109,7 @@ async function run() {
         })
 
         // PUT Payment Info to a Single Appointment 
-        app.put('/appointments/:id', async(req, res) => {
+        app.put('/appointments/payment/:id', async(req, res) => {
             const id = req.params.id;
             const payment = req.body;
             const filter = { _id: ObjectId(id) };
